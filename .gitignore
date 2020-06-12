@@ -5,3 +5,6 @@ vendor/
 ._composer.phar
 composer.phar
 public/uploads
+.env
+.env.prod
+.env.dev

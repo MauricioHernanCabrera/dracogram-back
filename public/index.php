@@ -6,16 +6,14 @@ $BASE_ROUTE = '';
 header('Content-type: application/json');
 
 if (isset($_SERVER['HTTP_ORIGIN'])) {
-    // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
-    // you want to allow, and if so:
     header('Content-type: application/json');
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Max-Age: 1000');
 }
+
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
-        // may also be using PUT, PATCH, HEAD etc
         header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, PATCH, DELETE");
     }
     if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
@@ -23,11 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     }
     exit(0);
 }
-
-// header('Access-Control-Allow-Origin: *');
-// header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-// header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, PATCH, DELETE");
-// header("Allow: GET, POST, PATCH, OPTIONS, PUT, DELETE");
 
 ini_set('display_errors', 1);
 ini_set('display_starup_error', 1);
@@ -96,8 +89,8 @@ $map->get('auth.verify', $BASE_ROUTE . '/auth/verify', [
 $map->get('users.getAll', $BASE_ROUTE . '/users', [
     'controller' => 'App\Controllers\UserController',
     'action' => 'getAll',
-    // 'middleware' => 'App\Middleware\AuthMiddleware',
-    // 'middlewareMethod' => 'isAuth'
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
 ]);
 
 $map->post('users.createOne', $BASE_ROUTE . '/users', [

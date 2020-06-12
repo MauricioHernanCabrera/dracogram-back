@@ -13,8 +13,9 @@ class JWToken {
   }
   
   public static function verify ($token, $error = []) {
-    $message = !empty($error['message'])? $error['message'] : "¡Caducó tu sesión!";
+    $message = !empty($error['message'])? $error['message'] : "¡Token invalido!";
     $status = !empty($error['status'])? $error['status'] : 401;
+
     try {
 
       $secret = getenv('JWT_SECRET');
@@ -24,7 +25,9 @@ class JWToken {
       if ($expirationDate >= $payload->exp) return Response::error($message, $status);
 
       return $payload;
-    } catch (\Exception $error) {
+    } catch (SignatureInvalidException $error) {
+      return Response::error($message, $status);
+    } catch (Exception $error) {
       return Response::error($message, $status);
     }
   }
