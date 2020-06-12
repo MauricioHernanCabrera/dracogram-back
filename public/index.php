@@ -55,58 +55,46 @@ $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();
 
-$map->get('index', $BASE_ROUTE . '/', [
-    'controller' => 'App\Controllers\IndexController',
-    'action' => 'indexAction'
+$map->post('auth.login', $BASE_ROUTE . '/auth/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'login',
 ]);
 
 $map->get('users.getAll', $BASE_ROUTE . '/users', [
     'controller' => 'App\Controllers\UserController',
-    'action' => 'getAll'
+    'action' => 'getAll',
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
 ]);
 
 $map->post('users.createOne', $BASE_ROUTE . '/users', [
     'controller' => 'App\Controllers\UserController',
-    'action' => 'createOne'
+    'action' => 'createOne',
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
 ]);
 
 $map->get('users.getOne', $BASE_ROUTE . '/users/{id}', [
     'controller' => 'App\Controllers\UserController',
-    'action' => 'getOne'
+    'action' => 'getOne',
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
 ]);
 
 $map->patch('users.updateOne', $BASE_ROUTE . '/users/{id}', [
     'controller' => 'App\Controllers\UserController',
-    'action' => 'updateOne'
+    'action' => 'updateOne',
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
 ]);
 
 $map->delete('users.deleteOne', $BASE_ROUTE . '/users/{id}', [
     'controller' => 'App\Controllers\UserController',
-    'action' => 'deleteOne'
+    'action' => 'deleteOne',
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
 ]);
 
-$map->post('auth.login', $BASE_ROUTE . '/auth/login', [
-    'controller' => 'App\Controllers\AuthController',
-    'action' => 'login'
-]);
-
-// $map->get('loginForm', $BASE_ROUTE . '/login', [
-//     'controller' => 'App\Controllers\AuthController',
-//     'action' => 'getLogin'
-// ]);
-// $map->get('logout', $BASE_ROUTE . '/logout', [
-//     'controller' => 'App\Controllers\AuthController',
-//     'action' => 'getLogout'
-// ]);
-// $map->post('auth', $BASE_ROUTE . '/auth', [
-//     'controller' => 'App\Controllers\AuthController',
-//     'action' => 'postLogin'
-// ]);
-// $map->get('admin', $BASE_ROUTE . '/admin', [
-//     'controller' => 'App\Controllers\AdminController',
-//     'action' => 'getIndex',
-//     'auth' => true
-// ]);
 
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
@@ -118,6 +106,8 @@ if (!$route) {
     $handlerData = $route->handler;
     $controllerName = $handlerData['controller'];
     $actionName = $handlerData['action'];
+    $middlewareName = isset($handlerData['middleware'])? $handlerData['middleware'] : false;
+    $middlewareMethodName = isset($handlerData['middlewareMethod'])? $handlerData['middlewareMethod'] : false;
     // $needsAuth = $handlerData['auth'] ?? false;
 
     // $sessionUserId = $_SESSION['userId'] ?? null;
@@ -130,6 +120,11 @@ if (!$route) {
         $request = $request->withAttribute($key, $val);
     }
     
+    if (!empty($middlewareName) && !empty($middlewareMethodName)) {
+        $middleware = new $middlewareName;
+        $middleware->$middlewareMethodName($request);
+    }
+
     $controller = new $controllerName;
     $controller->$actionName($request);
 }

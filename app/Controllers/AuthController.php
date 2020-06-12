@@ -22,6 +22,6 @@ class AuthController extends BaseController {
     $token = JWToken::sign($payload);
     $user = JWToken::verify($token);
 
-    Response::success(['token' => $token, 'user' => $user], "¡Se creo el usuario!", 200);
+    Response::success(['token' => $token, 'user' => $user], "¡Usuario logueado!", 200);
   }
 }
