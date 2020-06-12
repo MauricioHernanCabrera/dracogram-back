@@ -1,38 +1,27 @@
 <?php
-// namespace App\Controllers;
 
-// use App\Models\User;
-// use Respect\Validation\Validator as v;
-// use Zend\Diactoros\Response\RedirectResponse;
+namespace App\Controllers;
+use App\Utils\Response;
+use App\Utils\JWToken;
+use App\Models\User;
 
-// class AuthController extends BaseController {
-//     public function getLogin() {
-//         return $this->renderHTML('login.twig');
-//     }
+class AuthController extends BaseController {
+  public function login ($request) {
+    $data = json_decode($request->getBody());
+    $errorResponse = ['status' => 401, 'message' => '¡Email o contraseña incorrecto!'];
 
-//     public function postLogin($request) {
-//         $postData = $request->getParsedBody();
-//         $responseMessage = null;
+    User::existUserByEmail($data->email, $errorResponse);
 
-//         $user = User::where('email', $postData['email'])->first();
-//         if($user) {
-//             if (password_verify($postData['password'], $user->password)) {
-//                 $_SESSION['userId'] = $user->id;
-//                 return new RedirectResponse('/admin');
-//             } else {
-//                 $responseMessage = 'Bad credentials';
-//             }
-//         } else {
-//             $responseMessage = 'Bad credentials';
-//         }
+    $foundUser = User::where("email", $data->email)->first();
+    $payload = [
+      "email" => $foundUser->email,
+      "firstName" => $foundUser->firstName,
+      "lastName" => $foundUser->lastName,
+    ];
 
-//         return $this->renderHTML('login.twig', [
-//             'responseMessage' => $responseMessage
-//         ]);
-//     }
+    $token = JWToken::sign($payload);
+    $user = JWToken::verify($token);
 
-//     public function getLogout() {
-//         unset($_SESSION['userId']);
-//         return new RedirectResponse('/login');
-//     }
-// }
+    Response::success(['token' => $token, 'user' => $user], "¡Se creo el usuario!", 200);
+  }
+}

@@ -21,6 +21,7 @@ $dotenv->load();
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Aura\Router\RouterContainer;
+use App\Utils\Response;
 
 $capsule = new Capsule;
 
@@ -84,14 +85,11 @@ $map->delete('users.deleteOne', $BASE_ROUTE . '/users/{id}', [
     'action' => 'deleteOne'
 ]);
 
-// $map->get('addUser', $BASE_ROUTE . '/users/add', [
-//     'controller' => 'App\Controllers\UsersController',
-//     'action' => 'getAddUser'
-// ]);
-// $map->post('saveUser', $BASE_ROUTE . '/users/save', [
-//     'controller' => 'App\Controllers\UsersController',
-//     'action' => 'postSaveUser'
-// ]);
+$map->post('auth.login', $BASE_ROUTE . '/auth/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'login'
+]);
+
 // $map->get('loginForm', $BASE_ROUTE . '/login', [
 //     'controller' => 'App\Controllers\AuthController',
 //     'action' => 'getLogin'
@@ -113,16 +111,9 @@ $map->delete('users.deleteOne', $BASE_ROUTE . '/users/{id}', [
 $matcher = $routerContainer->getMatcher();
 $route = $matcher->match($request);
 
+
 if (!$route) {
-    $status = 404;
-    $response = [
-        'message' => 'Not found',
-        'data' => null,
-        'statusCode' => $status,
-        'error' => true
-    ];
-    http_response_code($status);
-    echo json_encode($response);
+    Response::error("Not found", 404);
 } else {
     $handlerData = $route->handler;
     $controllerName = $handlerData['controller'];
@@ -134,7 +125,11 @@ if (!$route) {
     //     echo 'Protected route';
     //     die;
     // }
-
+    
+    foreach ($route->attributes as $key => $val) {
+        $request = $request->withAttribute($key, $val);
+    }
+    
     $controller = new $controllerName;
     $controller->$actionName($request);
 }
