@@ -38,18 +38,19 @@ class UserController extends BaseController {
 
   public function updateOne($request) {
     $id = $request->getAttribute('id');
+    
     User::existUser($id);
-
+    
     $data = json_decode($request->getBody());
     $user = User::find($id);
 
-    if ($data->email && $user->email != $data->email) {
+    if (isset($data->email) && $user->email != $data->email) {
       User::notExistUserByEmail($data->email);
       $user->email = $data->email;
     }
-    if ($data->password) $user->setPassword($data->password);
-    if ($data->firstName) $user->firstName = $data->firstName;
-    if ($data->lastName) $user->lastName = $data->lastName;
+    if (isset($data->password)) $user->setPassword($data->password);
+    if (isset($data->firstName)) $user->firstName = $data->firstName;
+    if (isset($data->lastName)) $user->lastName = $data->lastName;
 
     $user->save();
 

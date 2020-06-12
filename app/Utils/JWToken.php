@@ -13,7 +13,7 @@ class JWToken {
   }
   
   public static function verify ($token, $error = []) {
-    $message = !empty($error['message'])? $error['message'] : "¡Token invalido!";
+    $message = !empty($error['message'])? $error['message'] : "¡Caducó tu sesión!";
     $status = !empty($error['status'])? $error['status'] : 401;
     try {
 
@@ -24,7 +24,7 @@ class JWToken {
       if ($expirationDate >= $payload->exp) return Response::error($message, $status);
 
       return $payload;
-    } catch (SignatureInvalidException $error) {
+    } catch (\Exception $error) {
       return Response::error($message, $status);
     }
   }

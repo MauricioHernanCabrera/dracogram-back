@@ -36,8 +36,8 @@ class AuthController extends BaseController {
     $payload = [
       'email' => $data->email,
       'password' => "xxxxxxxx",
-      'firstName' => '',
-      'lastName' => '',
+      'firstName' => $data->firstName,
+      'lastName' => $data->lastName,
     ];
     
     $user = User::create($payload);
