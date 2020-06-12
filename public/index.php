@@ -60,6 +60,13 @@ $map->post('auth.login', $BASE_ROUTE . '/auth/login', [
     'action' => 'login',
 ]);
 
+$map->get('auth.verify', $BASE_ROUTE . '/auth/verify', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'verify',
+    'middleware' => 'App\Middleware\AuthMiddleware',
+    'middlewareMethod' => 'isAuth'
+]);
+
 $map->get('users.getAll', $BASE_ROUTE . '/users', [
     'controller' => 'App\Controllers\UserController',
     'action' => 'getAll',
@@ -108,13 +115,6 @@ if (!$route) {
     $actionName = $handlerData['action'];
     $middlewareName = isset($handlerData['middleware'])? $handlerData['middleware'] : false;
     $middlewareMethodName = isset($handlerData['middlewareMethod'])? $handlerData['middlewareMethod'] : false;
-    // $needsAuth = $handlerData['auth'] ?? false;
-
-    // $sessionUserId = $_SESSION['userId'] ?? null;
-    // if ($needsAuth && !$sessionUserId) {
-    //     echo 'Protected route';
-    //     die;
-    // }
     
     foreach ($route->attributes as $key => $val) {
         $request = $request->withAttribute($key, $val);

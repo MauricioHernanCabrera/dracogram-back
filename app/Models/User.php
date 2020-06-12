@@ -45,7 +45,7 @@ class User extends Model {
     $this->attributes['password'] = password_hash($password, PASSWORD_DEFAULT);
   }
 
-  public function isValidPassword($password) {
+  public function comparePassword($password) {
     return password_verify($password, $this->attributes['password']);
   }
 }
