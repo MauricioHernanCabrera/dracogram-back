@@ -96,8 +96,8 @@ $map->get('auth.verify', $BASE_ROUTE . '/auth/verify', [
 $map->get('users.getAll', $BASE_ROUTE . '/users', [
     'controller' => 'App\Controllers\UserController',
     'action' => 'getAll',
-    'middleware' => 'App\Middleware\AuthMiddleware',
-    'middlewareMethod' => 'isAuth'
+    // 'middleware' => 'App\Middleware\AuthMiddleware',
+    // 'middlewareMethod' => 'isAuth'
 ]);
 
 $map->post('users.createOne', $BASE_ROUTE . '/users', [
