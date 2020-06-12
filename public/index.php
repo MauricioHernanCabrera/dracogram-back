@@ -1,6 +1,7 @@
 <?php
 
-$BASE_ROUTE = '/curso-introduccion-php-deploy';
+$BASE_ROUTE = '';
+// $BASE_ROUTE = '/curso-introduccion-php-deploy';
 
 header('Content-type: application/json');
 
