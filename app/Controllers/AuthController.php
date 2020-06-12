@@ -29,6 +29,24 @@ class AuthController extends BaseController {
     Response::success(['token' => $token, 'user' => $user], "¡Usuario logueado!", 200);
   }
 
+  public function register($request) {
+    $data = json_decode($request->getBody());
+    User::notExistUserByEmail($data->email);
+    
+    $payload = [
+      'email' => $data->email,
+      'password' => "xxxxxxxx",
+      'firstName' => '',
+      'lastName' => '',
+    ];
+    
+    $user = User::create($payload);
+    $user->setPassword($data->password);
+    $user->save();
+
+    Response::success($user, "¡Usuario registrado!", 201);
+  }
+
   public function verify ($request) {
     Response::success(null, "¡Token valido!", 200);
   }

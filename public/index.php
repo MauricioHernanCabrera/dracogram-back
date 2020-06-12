@@ -5,8 +5,8 @@ $BASE_ROUTE = '/curso-introduccion-php-deploy';
 header('Content-type: application/json');
 header('Access-Control-Allow-Origin: *');
 header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
-header("Allow: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, PATCH, DELETE");
+header("Allow: GET, POST, PATCH, OPTIONS, PUT, DELETE");
 
 ini_set('display_errors', 1);
 ini_set('display_starup_error', 1);
@@ -58,6 +58,11 @@ $map = $routerContainer->getMap();
 $map->post('auth.login', $BASE_ROUTE . '/auth/login', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'login',
+]);
+
+$map->post('auth.register', $BASE_ROUTE . '/auth/register', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'register',
 ]);
 
 $map->get('auth.verify', $BASE_ROUTE . '/auth/verify', [
